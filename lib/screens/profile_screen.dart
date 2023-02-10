@@ -11,67 +11,73 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 70),
-                child: buildCoverImage(),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: 70),
+                  child: buildCoverImage(),
+                ),
+                Positioned(
+                  top: 235,
+                  child: buildProfileImage(),
+                )
+              ],
+            ),
+          ),
+          const SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 20, bottom: 20),
+                child: Text(
+                  "Name",
+                  style: TextStyle(fontSize: 22),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Positioned(
-                top: 235,
-                child: buildProfileImage(),
-              )
-            ],
+            ),
           ),
-        ),
-        const SliverToBoxAdapter(
-          child: Center(
-            child: Text("name"),
+          SliverToBoxAdapter(
+              child: Center(
+            child: Text("realmadrid cf"),
+          )),
+          SliverToBoxAdapter(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OutlinedButton(
+                  onPressed: () {},
+                  child: Text("New post"),
+                ),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: Text("Edit profile"),
+                ),
+              ],
+            ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.amber,
+          SliverGrid(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: MediaQuery.of(context).size.width / 3,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 2,
+              childAspectRatio: 0.90,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Container(
+                  color: Colors.black54,
+                );
+              },
+            ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.pink,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.amber,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.pink,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.amber,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 200,
-            color: Colors.pink,
-          ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 
   buildCoverImage() => Container(
@@ -89,7 +95,7 @@ class _ProfileState extends State<Profile> {
         child: CircleAvatar(
           radius: 65,
           backgroundColor: Colors.grey.shade800,
-          backgroundImage: NetworkImage(
+          backgroundImage: const NetworkImage(
             "https://i.pinimg.com/236x/af/9f/1f/af9f1fed99621ae20f9edd2ab6cbb8bd.jpg",
           ),
         ),
