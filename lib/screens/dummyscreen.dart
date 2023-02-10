@@ -16,7 +16,12 @@ class dummy extends StatelessWidget {
           ]),
         ),
         Container(
-          child: Text("data"),
+          child: OutlinedButton(
+              onPressed: () {},
+              child: Text("OutlinedButton"),
+              style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.pink,
+                  side: BorderSide(color: Colors.pink))),
         )
       ]),
     );
