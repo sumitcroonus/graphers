@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_navigation/get_navigation.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -67,7 +67,16 @@ class _ProfileState extends State<Profile> {
                   child: const Text("New post"),
                 ),
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          child: AlertDialog(actions: []),
+                        );
+                      },
+                    );
+                  },
                   child: const Text("Edit bio"),
                 ),
               ],

@@ -45,8 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future validate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     mobileNo = prefs.getString("mobileNo");
-    print(mobileNo);
-    print("hello");
   }
 
   @override
