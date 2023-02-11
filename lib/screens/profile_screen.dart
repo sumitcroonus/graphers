@@ -1,9 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -13,39 +13,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  File? _image;
-
-  final TextEditingController caption = TextEditingController();
-
-  Future choiceImage() async {
-    try {
-      final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedImage == null) return;
-      final imageTemporary = File(pickedImage.path);
-      print(imageTemporary);
-      setState(() {
-        _image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('failed to pick image');
-    }
-  }
-
-  Future upload() async {
-    final uri = Uri.parse("http://192.168.1.65/api_photo/upload_image.php");
-    var request = http.MultipartRequest('POST', uri);
-    request.fields["caption"] = caption.text;
-    var pic = await http.MultipartFile.fromPath("image", _image!.path);
-    request.files.add(pic);
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      print("Image uploaded");
-    } else {
-      print("image not uploaded");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,63 +59,7 @@ class _ProfileState extends State<Profile> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return Container(
-                              child: AlertDialog(
-                                  title: Text("New Post"),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: 400,
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                width: 300,
-                                                height: 250,
-                                                child: _image != null
-                                                    ? Image.file(
-                                                        _image!,
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : const Text(
-                                                        "Select image"),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  choiceImage();
-                                                },
-                                                child: const Text(
-                                                  "add photo",
-                                                ),
-                                              ),
-                                              TextField(
-                                                controller: caption,
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                decoration:
-                                                    const InputDecoration(
-                                                        labelText: "Caption"),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            upload();
-                                          });
-                                        },
-                                        child: Text("Post"))
-                                  ]),
-                            );
-                          },
-                        );
+                        return Dialog();
                       },
                     );
                   },
@@ -204,4 +115,97 @@ class _ProfileState extends State<Profile> {
           ),
         ),
       );
+}
+
+class Dialog extends StatefulWidget {
+  const Dialog({super.key});
+
+  @override
+  State<Dialog> createState() => _DialogState();
+}
+
+class _DialogState extends State<Dialog> {
+  File? _image;
+
+  final TextEditingController caption = TextEditingController();
+
+  Future choiceImage() async {
+    try {
+      final pickedImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedImage == null) return;
+      final imageTemporary = File(pickedImage.path);
+      print(imageTemporary);
+      setState(() {
+        _image = imageTemporary;
+      });
+    } on PlatformException catch (e) {
+      print('failed to pick image');
+    }
+  }
+
+  Future upload() async {
+    final uri = Uri.parse("http://192.168.1.65/api_photo/upload_image.php");
+    var request = http.MultipartRequest('POST', uri);
+    request.fields["caption"] = caption.text;
+    var pic = await http.MultipartFile.fromPath("image", _image!.path);
+    request.files.add(pic);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print("Image uploaded");
+    } else {
+      print("image not uploaded");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        title: Text("New Post"),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 400,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 300,
+                      height: 250,
+                      child: _image != null
+                          ? Image.file(
+                              _image!,
+                              fit: BoxFit.cover,
+                            )
+                          : const Text("Select image"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        choiceImage();
+                      },
+                      child: const Text(
+                        "add photo",
+                      ),
+                    ),
+                    TextField(
+                      controller: caption,
+                      keyboardType: TextInputType.multiline,
+                      decoration: const InputDecoration(labelText: "Caption"),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                setState(() {
+                  upload();
+                });
+              },
+              child: Text("Post"))
+        ]);
+  }
 }
