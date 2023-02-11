@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:graphers/screens/dummyscreen.dart';
-import 'package:graphers/screens/home.dart';
-import 'package:graphers/screens/photographer_registeration_scrren.dart';
 import 'package:graphers/screens/profile_screen.dart';
-import 'package:graphers/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
