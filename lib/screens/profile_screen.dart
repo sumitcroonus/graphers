@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -203,6 +204,7 @@ class _DialogState extends State<Dialog> {
               onPressed: () {
                 setState(() {
                   upload();
+                  Navigator.of(context).pop();
                 });
               },
               child: Text("Post"))
