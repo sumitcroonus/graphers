@@ -20,7 +20,7 @@ class _CarouselState extends State<Carousel> {
     if (response.statusCode == 200) {
       setState(() {
         record = jsonDecode(response.body);
-        print(record);
+        // print(record);
       });
     }
   }

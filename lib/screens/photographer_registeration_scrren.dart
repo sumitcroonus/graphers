@@ -2,9 +2,10 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:get/get.dart';
+
 import 'package:graphers/screens/home.dart';
 import 'package:graphers/screens/profile_screen.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -34,24 +35,6 @@ class _PhotographerVerificationScreenState
       body: json.encode(
           {'Name': name.text, 'Email': email.text, 'PhoneNo': num.text}),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future getValidationData() async {
-      final SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      var obtainedPhoneNo = sharedPreferences.getString('phoneNo');
-      if (mobileNo == null) {
-      } else {
-        print(mobileNo);
-        Get.to(() => const Profile());
-      }
-      setState(() {
-        mobileNo = obtainedPhoneNo;
-      });
-    }
   }
 
   @override
@@ -222,16 +205,20 @@ class _PhotographerVerificationScreenState
                           if (isValid!) {
                             globalFormKey.currentState?.save();
                             register();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Profile(),
-                                ));
-                            // final SharedPreferences sharedPreferences =
-                            //     await SharedPreferences.getInstance();
-                            // sharedPreferences.setString('mobileNo', num.text);
-                            // Get.to(() => const Profile());
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => const Profile(),
+                            //     ));
                           }
+                          SharedPreferences pref =
+                              await SharedPreferences.getInstance();
+                          pref.setString("mobileNo", num.toString());
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (_) {
+                              return Profile();
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             textStyle: const TextStyle(fontSize: 20),

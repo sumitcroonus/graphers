@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:graphers/screens/photographer_list.dart';
 import 'package:graphers/screens/photographer_registeration_scrren.dart';
+import 'package:graphers/screens/profile_screen.dart';
 import 'package:graphers/widgets/carousel.dart';
 import 'package:graphers/widgets/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool buisness = false;
   List record = [];
+  String? mobileNo;
   Future<void> imagefromdb() async {
     try {
       var response = await http
@@ -24,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (response.statusCode == 200) {
         setState(() {
           record = jsonDecode(response.body);
-          print(record);
+          // print(record);
         });
       }
     } catch (e) {}
@@ -32,9 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    print("initstate home");
+    // print("initstate home");
     super.initState();
     imagefromdb();
+    validate();
+  }
+
+  Future validate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    mobileNo = prefs.getString("mobileNo");
+    print(mobileNo);
+    print("hello");
   }
 
   @override
@@ -226,12 +238,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     activeColor: const Color.fromRGBO(199, 62, 29, 0.6),
                     value: false,
                     onToggle: (val) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const PhotographerVerificationScreen()),
-                      );
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           const PhotographerVerificationScreen()),
+                      // );
+                      if (mobileNo == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const PhotographerVerificationScreen()),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Profile(),
+                          ),
+                        );
+                      }
                       setState(() {
                         buisness = true;
                       });
