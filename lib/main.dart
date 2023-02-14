@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:graphers/screens/check_cat.dart';
+import 'package:graphers/screens/dummyscreen.dart';
 import 'package:graphers/screens/home.dart';
+import 'package:graphers/screens/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Graphers',
       theme: ThemeData(),
-      home: const HomeScreen(),
+      home: const Profile(),
     );
   }
 }

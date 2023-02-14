@@ -6,24 +6,45 @@ class dummy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        SingleChildScrollView(
-          child: Column(children: [
-            Container(
-              height: 400,
-              color: Colors.amber,
-            )
-          ]),
-        ),
-        Container(
-          child: OutlinedButton(
-              onPressed: () {},
-              child: Text("OutlinedButton"),
-              style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.pink,
-                  side: BorderSide(color: Colors.pink))),
-        )
-      ]),
+      body: Column(
+        children: [
+          SingleChildScrollView(
+              child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                // padding: EdgeInsets.only(bottom: 100),
+                height: 300,
+                color: Colors.amber,
+              ),
+              const Positioned(
+                  top: 240,
+                  left: 40,
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.pink,
+                  ))
+            ],
+          )),
+          const SizedBox(
+            height: 70,
+          ),
+          Card(
+            shadowColor: Colors.pink,
+            elevation: 20,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.black87,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

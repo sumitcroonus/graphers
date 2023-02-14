@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import 'package:get/get.dart';
+import 'package:graphers/screens/photographer_registeration_scrren.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -14,6 +18,32 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  List pics = [];
+  Future<void> getPosts() async {
+    try {
+      final response =
+          await http.get(Uri.parse("http://192.168.1.65/api_photo/posts.php"));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          pics = jsonDecode(response.body);
+        });
+      }
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    getPosts();
+    super.initState();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    getPosts();
+    super.setState(fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +61,7 @@ class _ProfileState extends State<Profile> {
                 Positioned(
                   top: 235,
                   child: buildProfileImage(),
-                )
+                ),
               ],
             ),
           ),
@@ -47,10 +77,6 @@ class _ProfileState extends State<Profile> {
               ),
             ),
           ),
-          const SliverToBoxAdapter(
-              child: Center(
-            child: Text("realmadrid\nfc 13times champions league"),
-          )),
           SliverToBoxAdapter(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -67,18 +93,13 @@ class _ProfileState extends State<Profile> {
                   child: const Text("New post"),
                 ),
                 OutlinedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          child: AlertDialog(actions: []),
-                        );
-                      },
-                    );
-                  },
-                  child: const Text("Edit bio"),
-                ),
+                    onPressed: () async {
+                      final SharedPreferences sharedPreferences =
+                          await SharedPreferences.getInstance();
+                      sharedPreferences.remove('mobileNo');
+                      Get.to(() => const PhotographerVerificationScreen());
+                    },
+                    child: const Text("Log out"))
               ],
             ),
           ),
@@ -94,10 +115,26 @@ class _ProfileState extends State<Profile> {
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return Container(
-                  color: Colors.black54,
+                return InkWell(
+                  child: pics.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromRGBO(199, 62, 29, 0.6),
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  "http://192.168.1.65/api_photo/uploads/" +
+                                      pics[index]["image_url"]),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                 );
               },
+              childCount: pics.length,
             ),
           ),
         ],
@@ -140,24 +177,18 @@ class _DialogState extends State<Dialog> {
   final TextEditingController caption = TextEditingController();
 
   Future choiceImage() async {
-    try {
-      final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedImage == null) return;
-      final imageTemporary = File(pickedImage.path);
-      print(imageTemporary);
-      setState(() {
-        _image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('failed to pick image');
-    }
+    var pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = File(pickedImage!.path);
+      print(_image);
+    });
   }
 
   Future upload() async {
     final uri = Uri.parse("http://192.168.1.65/api_photo/upload_image.php");
     var request = http.MultipartRequest('POST', uri);
-    request.fields["caption"] = caption.text;
+    request.fields['caption'] = caption.text;
     var pic = await http.MultipartFile.fromPath("image", _image!.path);
     request.files.add(pic);
     var response = await request.send();
@@ -171,15 +202,15 @@ class _DialogState extends State<Dialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text("New Post"),
+        title: const Text("New Post"),
         content: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 height: 400,
                 child: Column(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 300,
                       height: 250,
                       child: _image != null
@@ -211,12 +242,12 @@ class _DialogState extends State<Dialog> {
         actions: [
           TextButton(
               onPressed: () {
+                upload();
                 setState(() {
-                  upload();
                   Navigator.of(context).pop();
                 });
               },
-              child: Text("Post"))
+              child: const Text("Post"))
         ]);
   }
 }
